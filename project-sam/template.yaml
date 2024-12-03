@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: '2023-11-28'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: A starter AWS Lambda function.
+Parameters: 
+    IdentityNameParameter: 
+      Type: String
+Globals:
+  Function:
+    Timeout: 3
+    LoggingConfig:
+      LogFormat: JSON
+Resources:
+  GetUsers:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: users/
+      Handler: app.lambda_handler
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      Events:
+        GetUsers:
+          Type: Api 
+          Properties:
+            Path: /users
+            Method: get
+      Environment:
+        Variables:
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          LOCALSTACK_AUTH_TOKEN: ls-noKiREhA-tipO-0094-QOMo-vAPoxeBu2612
+          ENDPOINT_LOCALSTACK: http://172.17.0.1:4566
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2022
+        Sourcemap: true
+        EntryPoints:
+        - app.ts
+  Queue:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: queue/
+      Handler: app.create_sqs
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      Events:
+        GetUsers:
+          Type: Api 
+          Properties:
+            Path: /queue
+            Method: get
+    Metadata: # Manage esbuild properties
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2022
+        Sourcemap: true
+        EntryPoints:
+        - app.ts

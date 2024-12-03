@@ -1,0 +1,6 @@
+{
+  "watch": ["./"],
+  "ignore": ["node_modules", ".aws-sam", "dist", "**/*.test.ts"],
+  "ext": "ts,js",
+  "exec": "rm -rf .aws-sam/* && sam build --use-container --manifest package.json && sam local start-api --docker-network localstack --env-vars env.json"
+}
